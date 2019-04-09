@@ -1,5 +1,5 @@
 
-context('Misc', () => {
+context('Example', () => {
     beforeEach(() => {
         cy.visit('http://localhost:8080/');
     });
@@ -14,7 +14,7 @@ context('Misc', () => {
     });
 
     it('native child in custom element', () => {
-        cy.get('my-element div#jay');
+        cy.get('my-element div#jay').should('have.text', 'My ID custom element');
     });
 
     it('nested custom element', () => {

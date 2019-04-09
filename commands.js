@@ -97,7 +97,7 @@ Cypress.Commands.overwrite('should', (originalFn, jq, action, value) => {
         let attached;
         if (!w.document.body.contains(node)) {
             // Attach node to dom in order to avoid 'not attached' error from cypress
-            attached = node.cloneNode();
+            attached = node.cloneNode(true);
             document.body.appendChild(attached);
             jq[0] = attached;
         }
