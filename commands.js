@@ -15,31 +15,28 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
     });
 
     function isNativeElement(element){
-        if(element.tagName.indexOf('-') === -1) {
+        if(element.tagName || element.indexOf('-') === -1) {
             return true;
         }
         return false;
     }
 
-    function getCustomElements(w, selector, options) {
+    function queryCustomElement(element, selector) {
+        if (element.shadowRoot) {
+            return element.shadowRoot.querySelectorAll(selector);
+        }
+        return element.querySelectorAll(selector);
+    }
 
-        // cy.get('.main_value ing-uic-amount$span#ingUicAmountFormatted')
-        const byNestedNativeTag = selector.indexOf('$') > -1;
-        if (byNestedNativeTag) {
-            const customElementSelector = selector.split('$')[0];
-            const nativeElementSelector = selector.split('$')[1];
-            const customElement = getCustomElements(w, customElementSelector)
-            if (!customElement) {
-                return customElement
-            }
-            if (nativeElementSelector.indexOf(':nth') > -1) {
-                const nth = parseInt(nativeElementSelector.match(/\d+/)[0]);
-                return customElement.shadowRoot.querySelectorAll(nativeElementSelector)[nth];
-            }
-            return customElement.shadowRoot.querySelector(nativeElementSelector);
+    function getCustomElements(w, selector, options, originalFn) {
+        const byDirectParent = selector.indexOf(' > ') > -1;
+        if (byDirectParent) {
+            const parentSelector = selector.split(' > ')[0];
+            const childSelector = selector.split(' > ')[1];
+            return w.Daywalker.store.byDirectParent(parentSelector, childSelector);
         }
 
-        const byId = selector.indexOf('#') > - 1;
+        const byId = selector.indexOf('#') > - 1 && selector.indexOf(' ') === - 1;
         if (byId) {
             return w.Daywalker.store.byId(selector.split('#')[0], selector.split('#')[1]);
         }
@@ -53,9 +50,20 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
             return w.Daywalker.store.byAttr(tag, attr, value);
         }
 
-        const byParent = selector.indexOf(' ') > - 1;
-        if (byParent) {
-            return w.Daywalker.store.byParent(selector.split(' ')[1], selector.split(' ')[0].replace('.', ''));
+        const byPath = selector.indexOf(' ') > - 1;
+        if (byPath) {
+            const path = selector.split(' ');
+            let element;
+            path.forEach(pathKey => {
+                let root;
+                if (element == null) {
+                    root = w.document;
+                } else {
+                    root = element.shadowRoot ? element.shadowRoot : element;
+                }
+                element = root.querySelector(pathKey);
+            });
+            return element;
         }
 
         const byClasses = selector.split('.').length > 2;
@@ -71,7 +79,7 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
     }
 
     return cy.window({ log: false }).then(w => new Cypress.Promise((resolve) => {
-        let result = getCustomElements(w, selector, options);
+        let result = getCustomElements(w, selector, options, originalFn);
 
         if ((options == null || options.multi == null) && Array.isArray(result)) {
             result = result[0];
@@ -83,4 +91,39 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
         }
         originalFn(selector, options).then(result => resolve(result));
     }));
+});
+
+
+Cypress.Commands.overwrite('should', (originalFn, jq, action, value) => {
+    Cypress.log({
+        displayName: 'DAYWALKER SHOULD',
+        message: `&nbsp;=> ${action} => ${value}`,
+    });
+    return cy.window({ log: false }).then(w => new Cypress.Promise((resolve) => {
+        const node = jq[0];
+        let attached;
+        if (!w.document.body.contains(node)) {
+            // Attach node to dom in order to avoid 'not attached' error from cypress
+            attached = node.cloneNode();
+            document.body.appendChild(attached);
+            jq[0] = attached;
+        }
+        originalFn(jq, action, value)
+            .then((result) => {
+                if (attached) {
+                    attached.remove();
+                }
+                resolve(result)
+            });
+    }));
+});
+
+Cypress.Commands.add('_click', { prevSubject: true }, (subject) => {
+  const element = subject.get(0);
+  if (element) element.dispatchEvent(new MouseEvent('click'));
+  Cypress.log({
+    displayName: '_click',
+    message: element.nodeName,
+  });
+  return subject;
 });

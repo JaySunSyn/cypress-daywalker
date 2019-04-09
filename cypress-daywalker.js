@@ -1,53 +1,85 @@
 ((global) => {
 	if (!global.Cypress) {
 		return;
-	}
+  }
+  
+  function getSelectorType(selector) {
+    const types = {
+      classes: false,
+      class: false,
+      id: false,
+    };
+    if (selector.indexOf('#') > -1) {
+      types.id = selector.split('#')[1];
+    }
+    if (selector.indexOf('.') > -1 && selector.split('.').length > 2) {
+      const multiClassKey = selector.split('.').slice(1).join('$');
+      types.classes = multiClassKey;
+    }
+    if (selector.indexOf('.') > -1 && selector.split('.').length <= 2) {
+      types.class = selector.split('.')[1];
+    }
+    return types;
+  }
+
   function Store(fn, ln) {
-		this.data = {};
+    this.data = {};
+    
+    const push = (arr, instance) => {
+      if (arr.find(node => node == instance)) {
+        return;
+      }
+      // if (!document.body.contains(instance)) {
+      //   return;
+      // }
+      arr.push(instance);
+    }
 
     this.add = function(tagName, instance) {
-      this.data[tagName] = this.data[tagName] || [];
-			this.data[tagName].push(instance);
+      this.data.tags = this.data.tags || {};
+      this.data.tags[tagName.toLowerCase()] = this.data.tags[tagName] || [];
+      push(this.data.tags[tagName], instance);
+
 			if (instance.id) {
 				this.data.ids = this.data.ids || {};
 				this.data.ids[instance.id] = this.data.ids[instance.id] || [];
-				this.data.ids[instance.id].push(instance)
+				push(this.data.ids[instance.id], instance)
 			}
 
 			this.data.classes = this.data.classes || {};
 			const classes = Array.from(instance.classList);
 			classes.forEach(function(c) {
 				this.data.classes[c] =  this.data.classes[c] || [];
-				this.data.classes[c].push(instance);
+				push(this.data.classes[c], instance);
 			}, this)
 
 			this.data.multiClasses =  this.data.multiClasses || {};
 			const multiClassKey = classes.join('$');
 			this.data.multiClasses[multiClassKey] = this.data.multiClasses[multiClassKey] || [];
-			this.data.multiClasses[multiClassKey].push(instance);
+			push(this.data.multiClasses[multiClassKey], instance);
     };
     this.byTag = function(tagName) {
-      return this.data[tagName];
+      return this.data.tags[tagName];
     };
     // cy.get('paper-button[title=Already have an account? Sign in]')
     this.byAttr = function(tagName, key, value) {
-      if (this.data[tagName] == null) {
+      if (this.data.tags[tagName] == null) {
         return;
       }
       return this.byTag(tagName).find(node => node.getAttribute(key) === value);
     };
     this.byProp = function(tagName, key, value) {
-      if (this.data[tagName] == null) {
+      if (this.data.tags[tagName] == null) {
         return;
       }
       return this.byTag(tagName).find(node => node[key] === value);
     };
     this.byId = function(tagName, id) {
-      if (tagName && this.data[tagName] == null) {
+      if (tagName && this.data.tags[tagName] == null) {
         return;
 			}
 			if (tagName) {
-				return this.data[tagName].find(node => node.id === id);
+				return this.data.tags[tagName].find(node => node.id === id);
 			}
 			if (!this.data.ids[id]) {
 				return;
@@ -60,11 +92,11 @@
 			return this.data.multiClasses[multiClassKey];
 		};
     this.byClass = function(tagName, cls) {
-      if (tagName && this.data[tagName] == null) {
+      if (tagName && this.data.tags[tagName] == null) {
         return;
 			}
 			if (tagName) {
-				return this.data[tagName].filter(node => Array.from(node.classList).indexOf(cls) > -1);
+				return this.data.tags[tagName].filter(node => Array.from(node.classList).indexOf(cls) > -1);
 			}
 			if (!this.data.classes[cls]) {
 				return;
@@ -72,32 +104,40 @@
       return this.data.classes[cls];
     };
     // cy.get('.btn--signin paper-button');
-    this.byParent = function(tagName, parentClass) {
-      if (this.data[tagName] == null) {
-        return;
-      }
-      if (parentClass.indexOf(':nth(') > -1) {
-        const nth = parseInt(parentClass.match(/\d+/)[0]) - 1;
-        const cls = parentClass.split(':')[0];
-        let result;
-        try {
-          result = this.data[tagName].filter(node => {
-            if (node.parentNode == null || !node.parentNode.classList) {
-              return;
-            }
-            return Array.from(node.parentNode.classList).indexOf(cls) > -1;
-          })[nth]
-        } catch (error) {
-          result = null;
+    this.byDirectParent = function(parentSelector, childSelector) {
+      const getPossibleElements = (selector) => {
+        const types = getSelectorType(selector)
+        if (types.id) {
+          return this.data.ids[types.id];
         }
-        return result;
-      }
-      return this.data[tagName].find(node => {
-        if (node.parentNode == null || !node.parentNode.classList) {
-          return;
+        if (types.classes) {
+          return this.data.multiClasses[types.classes];
         }
-        return Array.from(node.parentNode.classList).indexOf(parentClass) > -1;
-      });
+        if (types.class) {
+          return this.data.classes[types.class];
+        }
+        return this.data.tags[selector]
+      }
+
+      const parentSelectorType = getSelectorType(parentSelector);
+
+      return getPossibleElements(childSelector)
+        .filter(element => {
+          const parent = element.parentNode;
+          if (parentSelectorType.id) {
+            return parent.id === parentSelectorType.id;
+          }
+          if (parentSelectorType.class) {
+            return parent.classList.indexOf(parentSelectorType.class) > -1;
+          }
+          if (parentSelectorType.classes) {
+            return parentSelectorType.classes.split('$')
+              .every(c => {
+                return parent.classList.indexOf(c) > -1;
+              });
+          }
+          return parent && parent.tagName.toLowerCase() === parentSelector;
+        });
     };
   }
   const daywalker = {
