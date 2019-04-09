@@ -19,6 +19,10 @@ context('Example', () => {
 
     it('nested custom element', () => {
         cy.get('paper-button');
+        cy.get('paper-button', {multi: true})
+            .should(buttons => {
+                assert(buttons.length === 2, 'Did not find 2 paper-buttons')
+            });
     });
 
     it('nested custom element with path', () => {
