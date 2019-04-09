@@ -14,13 +14,6 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
         message: `&nbsp;=> ${selector}`,
     });
 
-    function isNativeElement(element){
-        if(element.tagName || element.indexOf('-') === -1) {
-            return true;
-        }
-        return false;
-    }
-
     function queryCustomElement(element, selector) {
         if (element.shadowRoot) {
             return element.shadowRoot.querySelectorAll(selector);
@@ -84,7 +77,7 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
         if ((options == null || options.multi == null) && Array.isArray(result)) {
             result = result[0];
         }
-        
+
         if (result != null) {
             resolve(result);
             return true;
@@ -118,12 +111,15 @@ Cypress.Commands.overwrite('should', (originalFn, jq, action, value) => {
     }));
 });
 
-Cypress.Commands.add('_click', { prevSubject: true }, (subject) => {
-  const element = subject.get(0);
-  if (element) element.dispatchEvent(new MouseEvent('click'));
-  Cypress.log({
-    displayName: '_click',
-    message: element.nodeName,
-  });
-  return subject;
+Cypress.Commands.add('dispatch', { prevSubject: true }, (subject, eventName, options) => {
+    const element = subject[0];
+    Cypress.log({
+        displayName: 'DAYWALKER DISPATCH',
+        message: `${element.tagName} => ${eventName}`,
+    });
+    
+    if (element) {
+        element.dispatchEvent(new Event(eventName), options)
+    };
+    return subject;
 });

@@ -19,7 +19,6 @@ context('Misc', () => {
 
     it('nested custom element', () => {
         cy.get('paper-button');
-        cy.get('paper-button')._click();
     });
 
     it('nested custom element with path', () => {
@@ -29,6 +28,6 @@ context('Misc', () => {
     it('direct child', () => {
         cy.get('#customContainer > my-element').should('have.class', 'in-container');
         cy.get('div > paper-button').should('have.class', 'click');
-        cy.get('div > paper-button').click();
+        cy.get('div > paper-button').dispatch('click');
     });
 });
