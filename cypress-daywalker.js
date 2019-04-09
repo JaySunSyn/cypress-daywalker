@@ -76,7 +76,7 @@
       if (this.data[tagName] == null) {
         return;
       }
-      if (parentClass.indexOf(':nth-child(') > -1) {
+      if (parentClass.indexOf(':nth(') > -1) {
         const nth = parseInt(parentClass.match(/\d+/)[0]) - 1;
         const cls = parentClass.split(':')[0];
         let result;
