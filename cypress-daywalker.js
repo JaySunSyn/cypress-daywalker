@@ -29,9 +29,6 @@
       if (arr.find(node => node == instance)) {
         return;
       }
-      // if (!document.body.contains(instance)) {
-      //   return;
-      // }
       arr.push(instance);
     }
 
