@@ -14,7 +14,9 @@ class MyElement extends LitElement {
             <div>My custom element</div>
             <div id="jay">My ID custom element</div>
             <div>
-                <paper-button class="click" @click=${this._onclick}>Click</paper-button>
+                <paper-button class="click" @click=${this._onclick}>
+                    <span class="label">Click</span>
+                </paper-button>
             </div>
         `;
     }

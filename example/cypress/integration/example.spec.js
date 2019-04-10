@@ -31,7 +31,8 @@ context('Example', () => {
 
     it('direct child', () => {
         cy.get('#customContainer > my-element').should('have.class', 'in-container');
-        cy.get('div > paper-button').should('have.class', 'click');
+        cy.get('div > paper-button span').should('have.text', 'Click');
+        cy.get('div > paper-button span').should('have.class', 'label');
         cy.get('div > paper-button').dispatch('click');
     });
 });
