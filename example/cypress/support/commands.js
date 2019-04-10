@@ -1,1 +1,1 @@
-import '../../node_modules/cypress-daywalker/commands';
+import 'cypress-daywalker/commands';
