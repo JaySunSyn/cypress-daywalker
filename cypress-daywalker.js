@@ -121,17 +121,17 @@
       return getPossibleElements(childSelector)
         .filter(element => {
           const parent = element.parentNode;
+          const classList = (parent.classList && Array.from(parent.classList)) || [];
+
           if (parentSelectorType.id) {
             return parent.id === parentSelectorType.id;
           }
           if (parentSelectorType.class) {
-            return parent.classList.indexOf(parentSelectorType.class) > -1;
+            return classList.indexOf(parentSelectorType.class) > -1;
           }
           if (parentSelectorType.classes) {
             return parentSelectorType.classes.split('$')
-              .every(c => {
-                return parent.classList.indexOf(c) > -1;
-              });
+              .every(c => classList.indexOf(c) > -1);
           }
           return parent && parent.tagName.toLowerCase() === parentSelector;
         });
