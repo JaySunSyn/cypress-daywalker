@@ -29,6 +29,10 @@ context('Example', () => {
         cy.get('#customContainer my-element paper-button');
     });
 
+    it('nth', () => {
+        cy.get('my-element:nth(1)');
+    });
+
     it('direct child', () => {
         cy.get('#customContainer > my-element').should('have.class', 'in-container');
         cy.get('div > paper-button span').should('have.text', 'Click');
