@@ -7,9 +7,34 @@ class Daywalker {
         return this.global.Daywalker.store;
     }
 
+    _attrSelectorContainsSpaces(selector) {
+        // 'my-element a[title=Hans runs] a[title=Piip poop]'
+        let parts = selector.split('[');
+        // ["my-element a", "title=Hans runs] a", "title=Piip poop]"]
+        parts.shift()
+        // ["title=Hans runs] a", "title=Piip poop]"]
+        parts = parts.map(e => e.split(']')).map(e => e[0]);
+        // ["title=Hans runs", "title=Piip poop"]
+        return parts.some(part => part.indexOf(' ') > -1);
+    }
+
+    _isByPath(selector) {
+        if (selector.indexOf(' ') === -1) {
+            return false;
+        }
+        if (selector.indexOf('[') > -1 && !this._attrSelectorContainsSpaces(selector)) {
+            return true;
+        }
+        return selector.split('[')[0].indexOf(' ') > -1;
+    }
+
     _getSelectorFn(selector) {
         if (selector.indexOf(' > ') > -1) {
             return selector => this.queryByDirectParent.call(this, selector);
+        }
+
+        if (this._isByPath(selector)) {
+            return selector => this.queryByPath.call(this, selector);
         }
 
         if (selector.indexOf('#') > - 1 && selector.indexOf(' ') === - 1) {
@@ -18,10 +43,6 @@ class Daywalker {
 
         if (selector.indexOf('[') > - 1) {
             return selector => this.queryByAttr.call(this, selector);
-        }
-
-        if (selector.indexOf(' ') > - 1) {
-            return selector => this.queryByPath.call(this, selector);
         }
 
         if (selector.split('.').length > 2) {
@@ -36,6 +57,9 @@ class Daywalker {
     }
 
     _query(element, sel) {
+        if (element == null) {
+            return;
+        }
         let result;
         let selector = sel;
         let nth;
@@ -57,6 +81,11 @@ class Daywalker {
         } catch (error) {
             return result;
         }
+    }
+
+    _isCustomElement(selector) {
+        // TODO: a[href=my-page.html] would match as a custom element
+        return selector && selector.indexOf('-') > -1;
     }
     // paper-button
     queryByTag(selector) {
@@ -82,14 +111,21 @@ class Daywalker {
     queryByPath(selector, root) {
         const path = selector.split(' ');
         let element;
+        let base;
+
+        if (root != null) {
+            base = root;
+        } else if (this._isCustomElement(path[0])) {
+            const basePath = path.shift();
+            base = this.querySelector(basePath);
+        } else {
+            base = this.global.document;
+        }
+
         path.forEach(pathKey => {
-            let base;
-            if (element == null) {
-                base = root || this.global.document;
-            } else {
+            if (element != null) {
                 base = element.shadowRoot ? element.shadowRoot : element;
             }
-            
             element = this._query(base, pathKey);
             element = Array.isArray(element) ? element[0] : element;
         });
@@ -197,15 +233,18 @@ Cypress.Commands.overwrite('should', (originalFn, jq, action, value, o) => {
         }));
 });
 
-Cypress.Commands.add('dispatch', { prevSubject: true }, (subject, eventName, options) => {
+Cypress.Commands.add('dispatch', { prevSubject: true }, (subject, event, options) => {
     const element = subject[0];
+    const eventStr = typeof event === 'string' ? event : event.toString();
+    const e = typeof event === 'string' ? new Event(event) : event;
+
     Cypress.log({
         displayName: 'DAYWALKER DISPATCH',
-        message: `${element.tagName} => ${eventName}`,
+        message: `${element.tagName} => ${eventStr}`,
     });
 
     if (element) {
-        element.dispatchEvent(new Event(eventName), options)
+        element.dispatchEvent(e, options)
     };
     return subject;
 });
