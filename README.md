@@ -22,7 +22,10 @@ Some custom commands:
 
 ```js
 cy.get('my-el').call('close')
-cy.get('my-el').dispatch('click')
-cy.get('paper-input').setProp('Hello how are you?')
+
+cy.get('paper-button').dispatch('click')
+cy.get('paper-button').dispatch(new MouseEvent('click'))
+
+cy.get('paper-input').setProp('moto moto')
 cy.get('paper-input').setProp('Question', 'label')
 ```
