@@ -185,6 +185,38 @@ class Daywalker {
 
 }
 
+function ensureAttached(w, node) {
+    if (node == null || w.document.body.contains(node)) {
+        return;
+    }
+    const attached = node.cloneNode(true);
+    document.body.appendChild(attached);
+    return attached;
+}
+
+function attachAndReturnOriginalFn(...args) {
+    return cy.window({ log: false })
+        .then(w => new Cypress.Promise((resolve, reject) => {
+            const originalFn = args.shift();
+            const jq = args[0];
+            const node = jq[0];
+            const attached = ensureAttached(w, node);
+
+            if (attached) {
+                jq[0] = attached;
+                args[0] = jq;
+            }
+            originalFn(...args)
+                .then((result) => {
+                    if (attached) {
+                        attached.remove();
+                    }
+                })
+                .then(resolve)
+                .catch(reject);
+        }));
+}
+
 Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
     Cypress.log({
         displayName: 'DAYWALKER GET',
@@ -206,31 +238,40 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
     }));
 });
 
-
-Cypress.Commands.overwrite('should', (originalFn, jq, action, value, o) => {
+Cypress.Commands.overwrite('should', (...args) => {
     Cypress.log({
         displayName: 'DAYWALKER SHOULD',
-        message: `&nbsp;=> ${action} => ${value}`,
+        message: `&nbsp;=> ${args[2]} => ${args[3]}`,
     });
 
-    return cy.window({ log: false })
-        .then(w => new Cypress.Promise((resolve, reject) => {
-            const node = jq[0];
-            if (node == null || w.document.body.contains(node)) {
-                originalFn(jq, action, value)
-                    .then(resolve)
-                    .catch(reject);
-                return;
-            }
-            const attached = node.cloneNode(true);
-            document.body.appendChild(attached);
-            jq[0] = attached;
+    return attachAndReturnOriginalFn(...args);
+});
 
-            originalFn(jq, action, value)
-                .then((result) => attached.remove())
-                .then(resolve)
-                .catch(reject);
-        }));
+Cypress.Commands.add('setProp', { prevSubject: true }, (subject, value, prop = 'value') => {
+    const element = subject[0];
+    Cypress.log({
+        displayName: 'DAYWALKER SET PROP',
+        message: `${element.tagName} => ${value}`,
+    });
+    if (element.set != null) {
+        element.set(prop, value);
+        return subject
+    }
+    element[prop] = value;
+    return subject;
+  });
+
+  Cypress.Commands.add('call', { prevSubject: true }, (subject, fnName, args = []) => {
+    const element = subject[0];
+    Cypress.log({
+        displayName: 'DAYWALKER CALL',
+        message: `${element.tagName} => ${fnName}`,
+    });
+
+    if (element) {
+        element[fnName](...args);
+    };
+    return subject;
 });
 
 Cypress.Commands.add('dispatch', { prevSubject: true }, (subject, event, options) => {

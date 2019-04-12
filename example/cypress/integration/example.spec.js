@@ -39,4 +39,13 @@ context('Example', () => {
         cy.get('div > paper-button span').should('have.class', 'label');
         cy.get('div > paper-button').dispatch('click');
     });
+
+    it('call function', () => {
+        cy.get('paper-input').call('focus');
+    });
+
+    it('set properties', () => {
+        cy.get('paper-input').setProp('World');
+        cy.get('paper-input').setProp('Hello', 'label');
+    });
 });

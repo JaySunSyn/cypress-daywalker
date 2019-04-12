@@ -1,5 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
 import '@polymer/paper-button';
+import '@polymer/paper-input/paper-input';
+
 /**
  * `my-element` Description
  *
@@ -17,6 +19,7 @@ class MyElement extends LitElement {
                 <paper-button class="click" @click=${this._onclick}>
                     <span class="label">Click</span>
                 </paper-button>
+                <paper-input label="Label"></paper-input>
             </div>
         `;
     }
