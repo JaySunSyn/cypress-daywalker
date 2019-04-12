@@ -16,3 +16,12 @@ At the top of your endtrypoint e.g. **`index.html`**:
 ```
 
 [Example](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/cypress/integration/example.spec.js)
+
+Some custom commands:
+
+```js
+cy.get('my-el').call('close')
+cy.get('my-el').dispatch('click')
+cy.get('paper-input').setProp('Hello how are you?')
+cy.get('paper-input').setProp('Question', 'label')
+```
