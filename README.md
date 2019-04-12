@@ -15,6 +15,7 @@ At the top of your endtrypoint e.g. **`index.html`**:
     <script src="./node_modules/cypress-daywalker/cypress-daywalker.js"></script>
 ```
 
+### Use
 [Example](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/cypress/integration/example.spec.js)
 
 Some custom commands:
