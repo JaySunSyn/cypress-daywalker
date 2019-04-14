@@ -10,7 +10,7 @@ At the top of **`cypress/support/commands.js`**:
 import 'cypress-daywalker/commands'
 ```
 
-At the top of your endtrypoint e.g. **`index.html`**:
+At the top of your entrypoint e.g. **`index.html`**:
 ```html
     <script src="./node_modules/cypress-daywalker/cypress-daywalker.js"></script>
 ```
