@@ -38,7 +38,7 @@ context('Default', () => {
 
 ```
 
-### Use
+### Usage
 [Example](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/cypress/integration/example.spec.js)
 
 Some custom commands:
