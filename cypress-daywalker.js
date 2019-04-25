@@ -122,7 +122,6 @@
         .filter(element => {
           const parent = element.parentNode;
           const classList = (parent.classList && Array.from(parent.classList)) || [];
-
           if (parentSelectorType.id) {
             return parent.id === parentSelectorType.id;
           }

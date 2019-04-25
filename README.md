@@ -13,6 +13,9 @@ import 'cypress-daywalker/commands'
 ```
 
 ## Usage
+
+The daywalker script gets injected when visiting a page via `cy.visit()`.
+
 [Example](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/cypress/integration/example.spec.js)
 
 Some custom commands:

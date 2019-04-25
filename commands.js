@@ -247,20 +247,19 @@ Cypress.Commands.overwrite('should', (...args) => {
     return attachAndReturnOriginalFn(...args);
 });
 
-Cypress.Commands.overwrite('visit', (...args) => {
+Cypress.Commands.overwrite('visit', (originalFn, url, options, nodeModulesBase = '/node_modules/') => {
   Cypress.log({
     displayName: 'DAYWALKER VISIT',
-    message: ${args[1]},
+    message: url,
    });
     
   cy.on('window:before:load', (w) => {
     const script = w.document.createElement('script');
-    script.src = '/node_modules/cypress-daywalker/cypress-daywalker.js';
+    script.src = `${nodeModulesBase}cypress-daywalker/cypress-daywalker.js`;
     w.document.querySelector('head').appendChild(script);
   });
 
-  const originalFn = args.shift();
-  return originalFn(...args);
+  return originalFn(url, options);
 });
 
 Cypress.Commands.add('setProp', { prevSubject: true }, (subject, value, prop = 'value') => {
