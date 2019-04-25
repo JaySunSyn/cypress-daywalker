@@ -12,7 +12,7 @@ import 'cypress-daywalker/commands'
 
 **Include the daywalker script:**
 
-either via a) At the top of your entrypoint e.g. **`index.html`**:
+either via a) At the top of your entrypoint e.g. **`index.html`** add following script tag
 ```html
     <script src="./node_modules/cypress-daywalker/cypress-daywalker.js"></script>
 ```
