@@ -247,6 +247,22 @@ Cypress.Commands.overwrite('should', (...args) => {
     return attachAndReturnOriginalFn(...args);
 });
 
+Cypress.Commands.overwrite('visit', (...args) => {
+  Cypress.log({
+    displayName: 'DAYWALKER VISIT',
+    message: ${args[1]},
+   });
+    
+  cy.on('window:before:load', (w) => {
+    const script = w.document.createElement('script');
+    script.src = '/node_modules/cypress-daywalker/cypress-daywalker.js';
+    w.document.querySelector('head').appendChild(script);
+  });
+
+  const originalFn = args.shift();
+  return originalFn(...args);
+});
+
 Cypress.Commands.add('setProp', { prevSubject: true }, (subject, value, prop = 'value') => {
     const element = subject[0];
     Cypress.log({
