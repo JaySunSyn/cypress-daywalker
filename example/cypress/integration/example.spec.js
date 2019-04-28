@@ -29,6 +29,14 @@ context('Example', () => {
         cy.get('#customContainer my-element paper-button');
     });
 
+    it('custom element via id', () => {
+        // The first found input with id 'important'
+        cy.get('#important').setProp('This is super important');
+
+        // The second input
+        cy.get('#customContainer my-element paper-input#important').setProp('This is also super important');
+    });
+
     it('nth', () => {
         cy.get('my-element:nth(1)');
     });

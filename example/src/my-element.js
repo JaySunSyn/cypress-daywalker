@@ -21,6 +21,7 @@ class MyElement extends LitElement {
                 </paper-button>
                 <paper-input label="Label"></paper-input>
             </div>
+            <paper-input id="important" label="VIP"></paper-input>
         `;
     }
 
