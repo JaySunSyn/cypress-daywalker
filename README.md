@@ -1,5 +1,7 @@
 # Cypress Daywalker
 
+[![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/cypress-daywalker)
+
 ## Installation
 
 Add the plugin to `devDependencies`
