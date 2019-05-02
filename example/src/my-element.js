@@ -22,6 +22,7 @@ class MyElement extends LitElement {
                 <paper-input label="Label"></paper-input>
             </div>
             <paper-input id="important" label="VIP"></paper-input>
+            <div class="foo moo">Milk</div>
         `;
     }
 
