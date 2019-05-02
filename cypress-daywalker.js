@@ -3,52 +3,55 @@
     return;
   }
 
-  function Store(fn, ln) {
-    this.data = {};
+  class DaywalkerStore {
+    constructor() {
+      this.data = {
+        tags: {},
+        classes: {},
+        ids: {},
+      };
+    }
 
-    const push = (arr, instance) => {
+    addInstance(tagName, instance) {
+      this.data.tags[tagName.toLowerCase()] = this.data.tags[tagName] || [];
+      this._push(this.data.tags[tagName], instance);
+
+      if (instance.id) {
+        this.data.ids[instance.id] = this.data.ids[instance.id] || [];
+        this._push(this.data.ids[instance.id], instance);
+      }
+
+      const classes = Array.from(instance.classList);
+      classes.forEach(function(c) {
+        this.data.classes[c] = this.data.classes[c] || [];
+        this._push(this.data.classes[c], instance);
+      }, this);
+    }
+
+    _push(arr, instance) {
       if (arr.find((node) => node == instance)) {
         return;
       }
       arr.push(instance);
-    };
-
-    this.add = function(tagName, instance) {
-      this.data.tags = this.data.tags || {};
-      this.data.tags[tagName.toLowerCase()] = this.data.tags[tagName] || [];
-      push(this.data.tags[tagName], instance);
-
-      if (instance.id) {
-        this.data.ids = this.data.ids || {};
-        this.data.ids[instance.id] = this.data.ids[instance.id] || [];
-        push(this.data.ids[instance.id], instance);
-      }
-
-      this.data.classes = this.data.classes || {};
-      const classes = Array.from(instance.classList);
-      classes.forEach(function(c) {
-        this.data.classes[c] = this.data.classes[c] || [];
-        push(this.data.classes[c], instance);
-      }, this);
-    };
+    }
   }
 
   const daywalker = {
-    store: new Store(),
+    store: new DaywalkerStore(),
   };
 
-  const old = customElements.define;
+  const oldDefine = customElements.define;
   customElements.define = function define(...args) {
     if (args && args.length > 0) {
       const name = args[0];
       args[1] = class b extends args[1] {
         constructor(...args) {
           super(...args);
-          daywalker.store.add(name, this);
+          daywalker.store.addInstance(name, this);
         }
       };
     }
-    return old.apply(this, args);
+    return oldDefine.apply(this, args);
   };
 
   global.Daywalker = daywalker;

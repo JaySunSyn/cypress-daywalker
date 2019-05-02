@@ -224,9 +224,13 @@ class DaywalkerStoreQuery {
     }
   }
 
-  __isCustomElement(selector) {
-    // TODO: a[href=my-page.html] would match as a custom element
-    return selector && selector.indexOf('-') > -1;
+  __isCustomElement(tagSelector) {
+    if (this.__selectorIsAttr(tagSelector)) {
+      // otherwise, a[href=my-page.html] would match as a custom element
+      const elementSelector = tagSelector.split('[')[0];
+      return elementSelector.indexOf('-') > -1;
+    }
+    return tagSelector && tagSelector.indexOf('-') > -1;
   }
 
   __getClassArrayFromSelector(selector) {
