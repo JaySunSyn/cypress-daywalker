@@ -1,20 +1,62 @@
+class DaywalkerStoreQuery {
+  constructor(store) {
+    this.store = store;
+  }
 
-function byTag(store, tagName) {
-    return store.data.tags[tagName];
-}
+  queryStore(selector) {
+    if (selector.indexOf(' > ') > -1) {
+      return this.byDirectParent(selector);
+    }
 
-function byClass(store, classes) {
+    if (this.__isByPath(selector)) {
+      return this.byPath(selector);
+    }
+
+    if (selector.indexOf('#') > - 1 && selector.indexOf(' ') === - 1) {
+      return this.byId(selector);
+    }
+
+    if (selector.indexOf('[') > - 1) {
+      return this.byAttr(selector);
+    }
+
+    if (selector.indexOf('.') > - 1) {
+      return this.byClass(selector);
+    }
+    return this.byTag(selector);
+  }
+
+  byTag(selector) {
+    return this.store.data.tags[selector];
+  }
+
+  byClass(selector) {
     // .foo.moo => ["", "foo", "moo"]
-    const classList = classes.split('.');
+    const classList = selector.split('.');
     classList.shift();
 
-    let firstClassInstances = store.classes[classList.shift()];
-    return classList.map(cls => {
-        return firstClassInstances.filter(instance => instances.includes(instance));
+    const firstClassInstances = this.store.classes[classList.shift()];
+    return classList.map((cls) => {
+      const instances = this.store.classes[cls];
+      return firstClassInstances.filter((instance) => instances.includes(instance));
     });
-};
+  }
+
+  byPath(selector) {
+
+  }
+
+  __isByPath(selector) {
+    if (selector.indexOf(' ') === -1) {
+      return false;
+    }
+    if (selector.indexOf('[') > -1 && !this._attrSelectorContainsSpaces(selector)) {
+      return true;
+    }
+    return selector.split('[')[0].indexOf(' ') > -1;
+  }
+}
 
 module.exports = {
-    byTag,
-    byClass,
-}
+  DaywalkerStoreQuery,
+};

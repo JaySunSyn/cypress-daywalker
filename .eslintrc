@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "google"
+  ],
+  "env": {
+    "es6": true
+  },
+  "rules": {
+    "require-jsdoc": 0,
+    "max-len": [2, {
+      "code": 120,
+      "tabWidth": 2,
+      "ignoreUrls": true
+    }]
+  }
+}
