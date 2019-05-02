@@ -25,7 +25,7 @@ context('Example', () => {
 
   it('nested custom element', () => {
     cy.get('paper-button');
-    cy.get('paper-button', {multi: true})
+    cy.get('paper-button', {all: true})
         .should((buttons) => {
           assert(buttons.length === 2, 'Did not find 2 paper-buttons');
         });
@@ -41,6 +41,9 @@ context('Example', () => {
 
     // The second input
     cy.get('#customContainer my-element paper-input#important').setProp('This is also super important');
+
+    // The third input via nth
+    cy.get('#customContainer my-element paper-input:nth(3) input').setProp('This is ALSO super important');
   });
 
   it('nth', () => {
