@@ -8,7 +8,7 @@ import '@polymer/paper-input/paper-input';
  * @customElement
  * @polymer
  * @demo
- * 
+ *
  */
 class MyElement extends LitElement {
     render() {
@@ -23,6 +23,7 @@ class MyElement extends LitElement {
             </div>
             <paper-input id="important" label="VIP"></paper-input>
             <div class="foo moo">Milk</div>
+            <paper-input class="input-class" label="Input class"></paper-input>
         `;
     }
 

@@ -1,62 +1,132 @@
 # Cypress Daywalker
+[![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/cypress-daywalker)
+
+Please star this repo if you use this plugin.
+This helps me to understand how many people it is useful for and motivates me to continue improving it.
 
 ## Installation
 
-Add the plugin to `devDependencies`
+### 1. Install the dependency
+Add the plugin to your `devDependencies`
+
 ```bash
 npm install -D cypress-daywalker
 ```
-
+### 2. Add daywalker commands
 At the top of **`cypress/support/commands.js`**:
 ```js
 import 'cypress-daywalker/commands'
 ```
 
-## Usage
+### 3. Add the Daywalker script
+You need to inject `cypress-daywalker.js` into your application's entrypoint. This can happen by manually or dynamically adding a script tag to your entrypoint file.
 
-### Include the daywalker script
+#### Via a static script tag
+This is the easiest way: At the top of your entrypoint file e.g. **`index.html`** add the following script tag.
 
-**Include the daywalker script automatically:**
-
-The daywalker script gets injected when visiting a page via `cy.visit()`.
-
-If you do not use `cy.visit`, add the script manually.
-
-**Include the daywalker script manually:**
-
-either via a) At the top of your entrypoint e.g. **`index.html`** add following script tag
 ```html
-    <script src="./node_modules/cypress-daywalker/cypress-daywalker.js"></script>
+  <!-- Eventually adjust the path to your node modules -->
+  <script src="./node_modules/cypress-daywalker/cypress-daywalker.js"></script>
 ```
-or via b) Dynamically add the daywalker script before each test
+
+#### Via a dynamic script tag
+You might want to avoid that the script tag ends up in a production environment. Therefore, you can inject the script tag into your document before any other javascript gets executed by listening to the `window:before:load` event.
 
 ```javascript
 context('Default', () => {
   before(() => {
+
+    // INJECT THE SCRIPT LIKE THIS:
     cy.on('window:before:load', (w) => {
       const script = w.document.createElement('script');
+      // Eventually adjust the path to your node modules
       script.src = '/node_modules/cypress-daywalker/cypress-daywalker.js';
       w.document.querySelector('head').appendChild(script);
     });
+
     cy.visit('http://localhost:3000/');
   });
   it('input gets filled', () => {
-    ...
+    // Test stuff
   });
 });
 ```
 
-[Example](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/cypress/integration/example.spec.js)
+## Usage
+Find an [example here](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/).
 
-### Custom commands
+Not all CSS selectors are supported yet, so do not use it as you would use jQuery or the usual querySelector command. Please create issues of use cases where you would like better querying functionalities. For the apps where this plugin was tested (very large and very small apps) the current functionality worked pretty well.
+
+### Query
+
+#### By Tag
+
+This works very well.
+
+```js
+cy.get('paper-button')
+```
+
+#### By ID
+
+This works very well.
+
+```js
+cy.get('#submit')
+cy.get('paper-button#submit')
+```
+
+#### By Class
+
+Find custom elements everywhere in the app or *native elements at root level*.
+
+```js
+cy.get('.foo')
+cy.get('.foo.moo')
+```
+
+#### By Direct Parent
+
+```html
+<div class="find-me">
+  <paper-button></paper-button>
+</div>
+<paper-button></paper-button>
+```
+
+```js
+cy.get('.find-me > paper-button')
+```
+
+#### By path
+
+Starting from the root level:
+
+```js
+cy.get('div my-element paper-input#important')
+```
+
+or starting from any custom element:
+
+```js
+cy.get('my-element div#jay')
+```
+
+Starting a path with a native element which is inside a shadow root is not supported.
+
+### Lazy loaded components
+If you lazy load some components, you, for example, can add a `.wait(500)` to your `.visit()` command to wait for them to get available.
+
+### Commands
+Not all cypress commands can be used yet. For some, there are replacements below.
 
 #### Click
 
 Instead of `.click()` use:
 
 ```js
-cy.get('paper-button').dispatch('click')
-cy.get('paper-button').dispatch(new MouseEvent('click'))
+cy.get('paper-button').dispatch('click') // Results in Event('click')
+cy.get('paper-button').dispatch(new MouseEvent('click')) // Or pass in any other event
 ```
 
 #### Type
@@ -64,8 +134,8 @@ cy.get('paper-button').dispatch(new MouseEvent('click'))
 Instead of `.type('Hello world')` use:
 
 ```js
-cy.get('paper-input').setProp('moto moto')
-cy.get('paper-input').setProp('Question', 'label')
+cy.get('paper-input').setProp('moto moto') // Results in the value property gets set
+cy.get('paper-input').setProp('Question', 'label') // Or specify the property name
 ```
 
 #### Invoke

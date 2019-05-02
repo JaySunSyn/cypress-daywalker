@@ -62,8 +62,14 @@ class DaywalkerStoreQuery {
 
   _byClass(selector) {
     const classList = this.__getClassArrayFromSelector(selector);
+    const firstClass = classList.shift();
+    const firstClassInstances = this.store.data.classes[firstClass];
 
-    const firstClassInstances = this.store.classes[classList.shift()];
+    if (classList.length === 0) {
+      // Only one class
+      return firstClassInstances;
+    }
+
     return classList.map((cls) => {
       const instances = this.store.classes[cls];
       return firstClassInstances.filter((instance) => instances.includes(instance));

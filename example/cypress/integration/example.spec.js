@@ -1,6 +1,12 @@
 
 context('Example', () => {
   beforeEach(() => {
+    cy.on('window:before:load', (w) => {
+      const script = w.document.createElement('script');
+      script.src = '/node_modules/cypress-daywalker/cypress-daywalker.js';
+      w.document.querySelector('head').appendChild(script);
+    });
+
     cy.visit('http://localhost:8080/');
   });
 
@@ -39,6 +45,10 @@ context('Example', () => {
 
   it('nth', () => {
     cy.get('my-element:nth(1)');
+  });
+
+  it('class', () => {
+    cy.get('.input-class');
   });
 
   it('classes', () => {
