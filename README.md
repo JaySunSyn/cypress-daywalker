@@ -4,8 +4,6 @@
 Please star this repo if you use this plugin.
 This helps me to understand how many people it is useful for and motivates me to continue improving it.
 
-[![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/cypress-daywalker)
-
 ## Installation
 
 ### 1. Install the dependency
@@ -147,3 +145,6 @@ Instead of `.invoke()` use:
 ```js
 cy.get('my-el').call('close')
 ```
+
+# Contributors
+- [Antonio Maria Calabretta](https://github.com/amcalabretta)
