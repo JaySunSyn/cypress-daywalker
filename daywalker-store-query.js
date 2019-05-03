@@ -12,10 +12,10 @@ class DaywalkerStoreQuery {
     return result;
   }
 
-  querySelector(selector, nth = 0) {
+  querySelector(selector, nth = 1) {
     const result = this.queryStore(selector);
     if (Array.isArray(result)) {
-      return result.length > nth ? result[nth] : null;
+      return result.length >= nth ? result[nth - 1] : null;
     }
     return result;
   }
