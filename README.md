@@ -1,8 +1,9 @@
 # Cypress Daywalker
 [![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/cypress-daywalker)
 
-Please star this repo if you use this plugin.
-This helps me to understand how many people it is useful for and motivates me to continue improving it.
+With Cypress Daywalker, you can use Cypress in your web components (Polymer, lit-html, ...) app.
+
+Please star this repo if you use this plugin. This helps me to understand how many people it is useful for and motivates me to continue improving it.
 
 ## Installation
 
