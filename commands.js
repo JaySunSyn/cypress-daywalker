@@ -42,9 +42,9 @@ Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
 
   return cy.window({log: false}).then((w) => new Cypress.Promise((resolve, reject) => {
     const walker = new Daywalker(w);
-    const result = options && options.multi
+    const result = options && options.all
             ? walker.querySelectorAll(selector)
-            : walker.querySelector(selector);
+            : walker.querySelector(selector, (options && options.nth) || 0);
     if (result != null) {
       resolve(result);
       return true;

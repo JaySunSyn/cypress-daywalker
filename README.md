@@ -55,9 +55,16 @@ context('Default', () => {
 ## Usage
 Find an [example here](https://github.com/JaySunSyn/cypress-daywalker/blob/master/example/).
 
-Not all CSS selectors are supported yet, so do not use it as you would use jQuery or the usual querySelector command. Please create issues of use cases where you would like better querying functionalities. For the apps where this plugin was tested (very large and very small apps) the current functionality worked pretty well.
+Not all CSS selectors are supported yet, so do not use it as you would use jQuery or the usual querySelector command. Please create issues of use cases where you would like better querying functionalities. For the apps this plugin was developed for, the current functionalities worked pretty well.
 
 ### Query
+By default, `cy.get` returns the first found node. If you want it to return any other one, there are two options: 
+
+*nth*
+1. `cy.get('my-element', {nth: 2})`
+2. `cy.get(paper-input:nth(3) input')`
+
+If you want to retrieve all results, add the `all`  flag like this `cy.get('my-element', {all: true})`.
 
 #### By Tag
 
@@ -115,7 +122,7 @@ cy.get('my-element div#jay')
 Starting a path with a native element which is inside a shadow root is not supported.
 
 ### Lazy loaded components
-If you lazy load some components, you, for example, can add a `.wait(500)` to your `.visit()` command to wait for them to get available.
+If you lazy load some components, you can, for example, add a `.wait(500)` to your `.visit()` command to wait for them to get available.
 
 ### Commands
 Not all cypress commands can be used yet. For some, there are replacements below.

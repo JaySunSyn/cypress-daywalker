@@ -81,14 +81,14 @@ class DaywalkerStoreQuery {
    * @return {Array}
    */
   _byAttr(selector) {
-    const tag = selector.split('[')[0];
+    const tagName = selector.split('[')[0];
     const fullAttr = selector.split('[')[1].replace(']', '');
     const value = fullAttr.split('=')[1];
     const attr = fullAttr.split('=')[0];
     if (this.store.data.tags[tagName] == null) {
       return;
     }
-    return this._byTag(tag).find((node) => node.getAttribute(attr) === value);
+    return this._byTag(tagName).find((node) => node.getAttribute(attr) === value);
   }
 
   _byPath(selector, root) {
@@ -131,10 +131,11 @@ class DaywalkerStoreQuery {
     }
 
     if (this.__selectorIsPath(childSelector)) {
-      const firstPathKeyOfChild = childSelector.split(' ')[0];
+      // [".main_value", ">", "paper-button", "span#foo"]
+      const directParentSelector = selector.split(' ').splice(0, 3).join(' ');
       const remainingPathKeysOfChild = childSelector.split(' ').slice(1).join(' ');
 
-      const child = this.querySelector(firstPathKeyOfChild, nth);
+      const child = this.querySelector(directParentSelector, nth);
 
       return this._byPath(remainingPathKeysOfChild, child);
     }
