@@ -1,7 +1,7 @@
 # Cypress Daywalker
 [![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/cypress-daywalker)
 
-With Cypress Daywalker, you can use Cypress in your web components (Polymer, lit-html, ...) app.
+Use Cypress Daywalker to test your web components (Polymer, lit-html, ...) app.
 
 Please star this repo if you use this plugin. This helps me to understand how many people it is useful for and motivates me to continue improving it.
 
@@ -40,8 +40,14 @@ context('Default', () => {
     // INJECT THE SCRIPT LIKE THIS:
     cy.on('window:before:load', (w) => {
       const script = w.document.createElement('script');
+      
       // Eventually adjust the path to your node modules
       script.src = '/node_modules/cypress-daywalker/cypress-daywalker.js';
+      
+      // // If you cannot reach your node_modules folder easily (e.g. in a Java application), try to load it via a cdn.
+      // script.src = 'https://cdn.jsdelivr.net/gh/jaysunsyn/cypress-daywalker@0.1.1/cypress-daywalker.js';
+      
+      
       w.document.querySelector('head').appendChild(script);
     });
 
