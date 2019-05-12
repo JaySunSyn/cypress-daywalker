@@ -20,7 +20,7 @@ import 'cypress-daywalker/commands'
 ```
 
 ### 3. Add the Daywalker script
-You need to inject `cypress-daywalker.js` into your application's entrypoint. This can happen by manually or dynamically adding a script tag to your entrypoint file.
+You need to inject `cypress-daywalker.js` into your application's entrypoint. This can happen by manually or dynamically adding a script tag to your entrypoint file. (If you test a built app, don't forget to add 'node_modules/cypress-daywalker/cypress-daywalker.js' as an extra dependency.)
 
 #### Via a static script tag
 This is the easiest way: At the top of your entrypoint file e.g. **`index.html`** add the following script tag.
