@@ -17,7 +17,7 @@
     },
     "devDependencies": {
         "cypress": "^3.2.0",
-        "cypress-daywalker": "^0.0.4",
+        "cypress-daywalker": "^0.1.1",
         "npm-run-all": "^4.1.3"
     }
 }
