@@ -45,7 +45,7 @@ context('Default', () => {
       script.src = '/node_modules/cypress-daywalker/cypress-daywalker.js';
       
       // // If you cannot reach your node_modules folder easily (e.g. in a Java application), try to load it via a cdn.
-      // script.src = 'https://cdn.jsdelivr.net/gh/jaysunsyn/cypress-daywalker@0.1.1/cypress-daywalker.js';
+      // script.src = 'https://cdn.jsdelivr.net/gh/jaysunsyn/cypress-daywalker@0.2.0/cypress-daywalker.js';
       
       
       w.document.querySelector('head').appendChild(script);
