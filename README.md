@@ -65,20 +65,20 @@ Find an [example here](https://github.com/JaySunSyn/cypress-daywalker/blob/maste
 Not all CSS selectors are supported yet, so do not use it as you would use jQuery or the usual querySelector command. Please create issues of use cases where you would like better querying functionalities. For the apps this plugin was developed for, the current functionalities worked pretty well.
 
 ### Query
-By default, `cy.get` returns the first found node. If you want it to return any other one, there are two options: 
+By default, `cy.dwGet` returns the first found node. If you want it to return any other one, there are two options: 
 
 *nth*
-1. `cy.get('my-element', {nth: 2})`
-2. `cy.get(paper-input:nth(3) input')`
+1. `cy.dwGet('my-element', {nth: 2})`
+2. `cy.dwGet(paper-input:nth(3) input')`
 
-If you want to retrieve all results, add the `all`  flag like this `cy.get('my-element', {all: true})`.
+If you want to retrieve all results, add the `all`  flag like this `cy.dwGet('my-element', {all: true})`.
 
 #### By Tag
 
 This works very well.
 
 ```js
-cy.get('paper-button')
+cy.dwGet('paper-button')
 ```
 
 #### By ID
@@ -86,8 +86,8 @@ cy.get('paper-button')
 This works very well.
 
 ```js
-cy.get('#submit')
-cy.get('paper-button#submit')
+cy.dwGet('#submit')
+cy.dwGet('paper-button#submit')
 ```
 
 #### By Class
@@ -95,8 +95,8 @@ cy.get('paper-button#submit')
 Find custom elements everywhere in the app or *native elements at root level*.
 
 ```js
-cy.get('.foo')
-cy.get('.foo.moo')
+cy.dwGet('.foo')
+cy.dwGet('.foo.moo')
 ```
 
 #### By Direct Parent
@@ -109,7 +109,7 @@ cy.get('.foo.moo')
 ```
 
 ```js
-cy.get('.find-me > paper-button')
+cy.dwGet('.find-me > paper-button')
 ```
 
 #### By path
@@ -117,13 +117,13 @@ cy.get('.find-me > paper-button')
 Starting from the root level:
 
 ```js
-cy.get('div my-element paper-input#important')
+cy.dwGet('div my-element paper-input#important')
 ```
 
 or starting from any custom element:
 
 ```js
-cy.get('my-element div#jay')
+cy.dwGet('my-element div#jay')
 ```
 
 Starting a path with a native element which is inside a shadow root is not supported.
@@ -139,8 +139,8 @@ Not all cypress commands can be used yet. For some, there are replacements below
 Instead of `.click()` use:
 
 ```js
-cy.get('paper-button').dispatch('click') // Results in Event('click')
-cy.get('paper-button').dispatch(new MouseEvent('click')) // Or pass in any other event
+cy.dwGet('paper-button').dwDispatch('click') // Results in Event('click')
+cy.dwGet('paper-button').dwDispatch(new MouseEvent('click')) // Or pass in any other event
 ```
 
 #### Type
@@ -148,8 +148,8 @@ cy.get('paper-button').dispatch(new MouseEvent('click')) // Or pass in any other
 Instead of `.type('Hello world')` use:
 
 ```js
-cy.get('paper-input').setProp('moto moto') // Results in the value property gets set
-cy.get('paper-input').setProp('Question', 'label') // Or specify the property name
+cy.dwGet('paper-input').dwSetProp('moto moto') // Results in the value property gets set
+cy.dwGet('paper-input').dwSetProp('Question', 'label') // Or specify the property name
 ```
 
 #### Invoke
@@ -157,7 +157,19 @@ cy.get('paper-input').setProp('Question', 'label') // Or specify the property na
 Instead of `.invoke()` use:
 
 ```js
-cy.get('my-el').call('close')
+cy.dwGet('my-el').dwCall('close')
+```
+
+#### Should
+
+Before using `.should()` you need to attach the node.
+
+When a node gets attached, it gets cloned and appended to the body. When detatching, this clone gets removed.
+
+Be aware that after attaching, you interact with a cloned node and not with the original one.
+
+```js
+cy.dwGet('div > paper-button span').dwAttach().should('have.text', 'Click').dwDetach();
 ```
 
 # Contributors
