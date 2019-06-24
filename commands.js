@@ -9,62 +9,55 @@ function ensureAttached(w, node) {
   return attached;
 }
 
-function attachAndReturnOriginalFn(...args) {
-  return cy.window({log: false})
-      .then((w) => new Cypress.Promise((resolve, reject) => {
-        const originalFn = args.shift();
-        const jq = args[0];
-        const node = jq[0];
-        const attached = ensureAttached(w, node);
-
-        if (attached) {
-          jq[0] = attached;
-          args[0] = jq;
-        }
-
-        originalFn(...args)
-            .then((result) => {
-              if (attached) {
-                attached.remove();
-              }
-              return result;
-            })
-            .then(resolve)
-            .catch(reject);
-      }));
-}
-
-Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
+Cypress.Commands.add('dwGet', {prevSubject: false}, (selector, options) => {
   Cypress.log({
     displayName: 'DAYWALKER GET',
     message: `&nbsp;=> ${selector}`,
   });
-
-  return cy.window({log: false}).then((w) => new Cypress.Promise((resolve, reject) => {
+  // debugger;
+  return cy.window({log: false}).then((w) => {
     const walker = new Daywalker(w);
-
     const result = options && options.all
             ? walker.querySelectorAll(selector)
             : walker.querySelector(selector, (options && options.nth) || 1);
     if (result != null) {
-      resolve(result);
-      return true;
+      return result;
     }
-    originalFn(selector, options)
-        .then(resolve)
-        .catch(reject);
+
+    return cy.get(selector, options);
+  });
+});
+
+Cypress.Commands.add('dwAttach', {prevSubject: true}, (subject) => {
+  Cypress.log({
+    displayName: 'DAYWALKER ATTACH (CLONE)',
+    message: `&nbsp; ${subject[0].tagName}`,
+  });
+  return cy.window({log: false}).then((w) => new Cypress.Promise((resolve, reject) => {
+    const attachedNode = ensureAttached(w, subject[0]);
+    if (attachedNode) {
+      attachedNode.__proto__.dwDetach = attachedNode.remove;
+    }
+    resolve(attachedNode || subject[0]);
   }));
 });
 
-Cypress.Commands.overwrite('should', (...args) => {
+Cypress.Commands.add('dwDetach', {prevSubject: true}, (subject) => {
   Cypress.log({
-    displayName: 'DAYWALKER SHOULD',
-    message: `&nbsp;=> ${args[2]} => ${args[3]}`,
+    displayName: 'DAYWALKER DETACH',
+    message: `&nbsp; ${subject[0].tagName}`,
   });
-  return attachAndReturnOriginalFn(...args);
+  return cy.window({log: false}).then((w) => new Cypress.Promise((resolve, reject) => {
+    const node = subject[0];
+    if (node.detach) {
+      debugger;
+      node.dwDetach();
+    }
+    resolve(subject[0]);
+  }));
 });
 
-Cypress.Commands.add('setProp', {prevSubject: true}, (subject, value, prop = 'value') => {
+Cypress.Commands.add('dwSetProp', {prevSubject: true}, (subject, value, prop = 'value') => {
   const element = subject[0];
   Cypress.log({
     displayName: 'DAYWALKER SET PROP',
@@ -78,7 +71,7 @@ Cypress.Commands.add('setProp', {prevSubject: true}, (subject, value, prop = 'va
   return subject;
 });
 
-Cypress.Commands.add('call', {prevSubject: true}, (subject, fnName, args = []) => {
+Cypress.Commands.add('dwCall', {prevSubject: true}, (subject, fnName, args = []) => {
   const element = subject[0];
   Cypress.log({
     displayName: 'DAYWALKER CALL',
@@ -91,7 +84,7 @@ Cypress.Commands.add('call', {prevSubject: true}, (subject, fnName, args = []) =
   return subject;
 });
 
-Cypress.Commands.add('dispatch', {prevSubject: true}, (subject, event, options) => {
+Cypress.Commands.add('dwDispatch', {prevSubject: true}, (subject, event, options) => {
   const element = subject[0];
   const eventStr = typeof event === 'string' ? event : event.toString();
   const e = typeof event === 'string' ? new Event(event) : event;
