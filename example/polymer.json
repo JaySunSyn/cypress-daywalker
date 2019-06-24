@@ -1,0 +1,15 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/my-element.js",
+  "sources": [
+    "src/**/*"
+  ],
+  "extraDependencies": [
+    "node_modules/cypress-daywalker/**/*.js"
+  ],
+  "builds": [
+    {
+      "preset": "es5-bundled"
+    }
+  ]
+}
