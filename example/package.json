@@ -6,7 +6,7 @@
     "scripts": {
         "cypress:gui": "cypress open",
         "test": "run-p -r start cypress:*",
-        "start": "polymer serve build/es5-bundled -p 8080",
+        "start": "polymer serve -p 8080",
         "build": "polymer build"
     },
     "author": "",
