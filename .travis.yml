@@ -18,6 +18,7 @@ before_install:
   - cd example
 
 install:
+  - npm install -g polymer-cli
   - npm install
 
 script:
