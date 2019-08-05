@@ -1,1 +1,1 @@
-import 'cypress-daywalker/commands';
+import '../../../commands';

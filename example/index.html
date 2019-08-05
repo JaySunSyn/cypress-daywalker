@@ -8,8 +8,11 @@
     <script>
       // Skip loading fonts
       window.polymerSkipLoadingFontRoboto = true;
+      setTimeout(() => {
+        // Simulate lazy import
+        import('./src/my-element.js')
+      }, 100);
     </script>
-    <script type="module" src="src/my-element.js"></script>
 </head>
 <body>
     <div class="foo moo">

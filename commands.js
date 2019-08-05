@@ -9,22 +9,44 @@ function ensureAttached(w, node) {
   return attached;
 }
 
-Cypress.Commands.add('dwGet', {prevSubject: false}, (selector, options) => {
+Cypress.Commands.add('dwGet', {prevSubject: false}, (selector, options = {}) => {
   Cypress.log({
     displayName: 'DAYWALKER GET',
     message: `&nbsp;=> ${selector}`,
   });
-  // debugger;
+
   return cy.window({log: false}).then((w) => {
     const walker = new Daywalker(w);
-    const result = options && options.all
-            ? walker.querySelectorAll(selector)
-            : walker.querySelector(selector, (options && options.nth) || 1);
-    if (result != null) {
-      return result;
-    }
+    const maxRetries = options.maxRetries || 3;
+    const retryDelayBase = options.retryDelayBase || 500;
 
-    return cy.get(selector, options);
+    return new Cypress.Promise((resolve) => {
+      let tries = 0;
+      let result;
+
+      function tryQuery() {
+        result = options.all
+          ? walker.querySelectorAll(selector)
+          : walker.querySelector(selector, (options.nth) || 1);
+
+        if (result == null && tries <= maxRetries) {
+          setTimeout(() => {
+            result = tryQuery();
+          }, retryDelayBase * tries);
+          tries += 1;
+          return;
+        }
+        resolve(result);
+      }
+
+      tryQuery();
+    })
+        .then((result) => {
+          if (result == null) {
+            return cy.get(selector, options);
+          }
+          return result;
+        });
   });
 });
 

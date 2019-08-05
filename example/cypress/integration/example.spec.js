@@ -62,7 +62,7 @@ context('Example', () => {
     cy.dwGet('#customContainer > my-element').dwAttach().should('have.class', 'in-container').dwDetach();
     cy.dwGet('div > paper-button span').dwAttach().should('have.text', 'Click').dwDetach();
     cy.dwGet('div > paper-button span').dwAttach().should('have.class', 'label').dwDetach();
-    cy.dwGet('div > paper-button').dispatch('click');
+    cy.dwGet('div > paper-button').dwDispatch('click');
   });
 
   it('call function', () => {
