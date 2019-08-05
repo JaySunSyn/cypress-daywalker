@@ -18,7 +18,7 @@ before_install:
   - cd example
 
 install:
-  - npm i
+  - npm install
 
 script:
-  - $(npm bin)/cypress run --record --key 07c39f8e-ff38-4fe6-abd7-4be20aee0758
+  - npm run test-ci
