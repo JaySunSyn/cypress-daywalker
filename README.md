@@ -174,3 +174,7 @@ cy.dwGet('div > paper-button span').dwAttach().should('have.text', 'Click').dwDe
 
 # Contributors
 - [Antonio Maria Calabretta](https://github.com/amcalabretta)
+
+# CI
+
+See the latest tests of the example https://travis-ci.com/JaySunSyn/cypress-daywalker/builds/
