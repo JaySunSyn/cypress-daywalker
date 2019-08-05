@@ -6,7 +6,8 @@
     "scripts": {
         "cypress:gui": "cypress open",
         "test": "run-p -r start cypress:*",
-        "test-ci": "run-p -r start cypress run --record --key 07c39f8e-ff38-4fe6-abd7-4be20aee0758",
+        "test-ci": "run-p -r start cypress-ci:*",
+        "cypress-ci:test": "cypress run --record --key 07c39f8e-ff38-4fe6-abd7-4be20aee0758",
         "start": "polymer serve -p 8080",
         "build": "polymer build"
     },
