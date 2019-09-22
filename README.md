@@ -5,6 +5,8 @@ Use Cypress Daywalker to test your web components (Polymer, lit-html, ...) app.
 
 Please star this repo if you use this plugin. This helps me to understand how many people it is useful for and motivates me to continue improving it.
 
+This plugin does **not** randomly query through trees of nodes but rather creates an index of all registered custom elements.
+
 ## Installation
 
 ### 1. Install the dependency
