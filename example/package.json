@@ -19,7 +19,7 @@
         "@polymer/paper-input": "^3.0.2"
     },
     "devDependencies": {
-        "cypress": "^3.2.0",
+        "cypress": "^12.7.0",
         "cypress-daywalker": "^0.2.0",
         "npm-run-all": "^4.1.3"
     }
